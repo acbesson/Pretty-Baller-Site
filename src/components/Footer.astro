@@ -1,0 +1,24 @@
+---
+const year = new Date().getFullYear();
+---
+<div class="grid grid-2 rule-t">
+  <div class="subscribe" id="subscribe">
+    <h2 class="anton">Get all four in your inbox</h2>
+    <p style="margin:0; font-size:15px; font-weight:500;">One email per segment. No recaps of recaps.</p>
+    <!-- Replace the action URL with your Beehiiv / Buttondown / Mailchimp form endpoint. -->
+    <form action="#" method="post" onsubmit="alert('Hook this form up to your email provider (see README).'); return false;">
+      <input type="email" name="email" placeholder="your@email.com" required />
+      <button class="btn" type="submit">Subscribe</button>
+    </form>
+  </div>
+  <div class="elsewhere">
+    <span class="label" style="color: var(--pink)">Elsewhere</span>
+    <a class="anton" href="https://instagram.com/prettyballersports" target="_blank" rel="noopener">Instagram · @prettyballersports</a>
+    <a class="anton" href="https://tiktok.com/@prettyballersports" target="_blank" rel="noopener">TikTok · @prettyballersports</a>
+    <span class="anton" style="color: var(--ink-muted)">Podcast · Coming soon</span>
+  </div>
+</div>
+<footer class="site-footer">
+  <span class="anton" style="font-size:22px">Pretty Baller<span style="color:var(--pink)">.</span></span>
+  <span class="label" style="color: var(--ink-muted)">© {year} · <a href="/about">About</a> · <a href="/rss.xml">RSS</a></span>
+</footer>

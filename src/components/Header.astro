@@ -1,0 +1,20 @@
+---
+import { SEGMENTS, SEGMENT_ORDER } from '../segments';
+interface Props { active?: string; week?: string; crumb?: string; }
+const { active, week = 'Week 1', crumb = 'Home · All four segments' } = Astro.props;
+---
+<header class="site-header">
+  <a class="wordmark" href="/"><span class="anton">Pretty<br />Baller<span class="dot">.</span></span></a>
+  <nav class="nav">
+    {SEGMENT_ORDER.map((k) => (
+      <a href={`/${SEGMENTS[k].slug}`} class={active === k ? `active-${k}` : ''}>{SEGMENTS[k].name}</a>
+    ))}
+  </nav>
+</header>
+<div class="subbar">
+  <div class="left">
+    <span class="label">{week}</span>
+    <span class="label" style="color: var(--ink-muted)">{crumb}</span>
+  </div>
+  <a class="btn" href="/#subscribe">Subscribe</a>
+</div>

@@ -1,0 +1,159 @@
+# Decap CMS — the browser editor at /admin (Netlify Identity + Git Gateway; see README)
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images"
+public_folder: "/images"
+
+# Shared fields every edition has
+x_base: &base
+  - { label: "Headline", name: "title", widget: "string", hint: "Anton, uppercase on the page. Under ~14 words." }
+  - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+  - { label: "Week", name: "week", widget: "string", required: false, hint: "Week 2, College Week 1…" }
+  - { label: "Kicker", name: "kicker", widget: "string", required: false, hint: "Small label next to the LEAD tag, e.g. Coach watch · 6 min" }
+  - { label: "Dek", name: "dek", widget: "text", required: false, hint: "One-liner under the headline; also the social preview text." }
+  - { label: "Lead image", name: "image", widget: "image", required: false }
+  - { label: "Image credit", name: "imageCredit", widget: "string", required: false }
+  - { label: "Draft", name: "draft", widget: "boolean", default: false }
+  - { label: "Lead story", name: "body", widget: "markdown", hint: "Bold the score lines. Short paragraphs." }
+
+collections:
+  - name: "whos-sweating"
+    label: "01 · Who's Sweating?"
+    folder: "src/content/posts"
+    filter: { field: "segment", value: "whos-sweating" }
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Segment", name: "segment", widget: "hidden", default: "whos-sweating" }
+      - *base
+      - label: "Also sweating (sidebar)"
+        name: "alsoSweating"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Headline", name: "title", widget: "string" }
+          - { label: "Meta", name: "meta", widget: "string", required: false, hint: "Front office · 3 min" }
+      - label: "Heat index"
+        name: "heatIndex"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Who", name: "who", widget: "string", hint: "Coach, Team" }
+          - { label: "Temperature", name: "temp", widget: "number", min: 0, max: 100, value_type: "int" }
+          - { label: "One line of evidence", name: "note", widget: "string", required: false }
+      - label: "Ownership oopsies"
+        name: "oopsies"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Tag", name: "tag", widget: "string", hint: "Reply all · Stadium saga · Said out loud" }
+          - { label: "Headline", name: "title", widget: "string" }
+          - { label: "Two sentences", name: "body", widget: "text", required: false }
+
+  - name: "standing-on"
+    label: "02 · What I'm Standing On"
+    folder: "src/content/posts"
+    filter: { field: "segment", value: "standing-on" }
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Segment", name: "segment", widget: "hidden", default: "standing-on" }
+      - *base
+      - label: "Receipts strip"
+        name: "receipts"
+        widget: "object"
+        fields:
+          - { label: "Season ATS", name: "seasonATS", widget: "string", default: "0–0–0" }
+          - { label: "Last week", name: "lastWeek", widget: "string", default: "—" }
+          - { label: "Locks", name: "locks", widget: "string", default: "0–0" }
+          - { label: "Worst beat", name: "worstBeat", widget: "string", default: "—" }
+      - { label: "Lock confidence (1–10)", name: "confidence", widget: "number", min: 1, max: 10, value_type: "int", default: 7 }
+      - { label: "Confidence note", name: "confidenceNote", widget: "string", required: false }
+      - label: "The slate"
+        name: "slate"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "When", name: "when", widget: "string", hint: "Sun · 1:00 ET" }
+          - { label: "Matchup", name: "matchup", widget: "string", hint: "Away at Home" }
+          - { label: "Pick", name: "pick", widget: "string", hint: "Team –3.5" }
+          - { label: "Why (one sentence)", name: "why", widget: "string", required: false }
+          - { label: "Confidence (1–5 blocks)", name: "conf", widget: "number", min: 1, max: 5, value_type: "int", default: 3 }
+      - label: "Hot take"
+        name: "hotTake"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "The take", name: "title", widget: "string" }
+          - { label: "Two sentences of evidence", name: "body", widget: "text", required: false }
+
+  - name: "group-chat"
+    label: "03 · The Group Chat"
+    folder: "src/content/posts"
+    filter: { field: "segment", value: "group-chat" }
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Segment", name: "segment", widget: "hidden", default: "group-chat" }
+      - *base
+      - label: "Overheard"
+        name: "overheard"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Quote", name: "quote", widget: "text" }
+          - { label: "Who / where", name: "who", widget: "string", required: false }
+      - label: "Chemistry check"
+        name: "chemistry"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Status", name: "status", widget: "select", options: ["thriving", "tense", "watching"] }
+          - { label: "Team or duo", name: "subject", widget: "string" }
+          - { label: "One sentence of evidence", name: "note", widget: "string", required: false }
+      - label: "Also in the chat"
+        name: "also"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Headline", name: "title", widget: "string" }
+          - { label: "Two sentences", name: "body", widget: "text", required: false }
+
+  - name: "morning-after"
+    label: "04 · The Morning After"
+    folder: "src/content/posts"
+    filter: { field: "segment", value: "morning-after" }
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Segment", name: "segment", widget: "hidden", default: "morning-after" }
+      - *base
+      - label: "Scoreboard strip"
+        name: "scoreboard"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Label", name: "label", widget: "string", default: "Final" }
+          - { label: "Away", name: "away", widget: "string" }
+          - { label: "Away score", name: "awayScore", widget: "number", value_type: "int" }
+          - { label: "Home", name: "home", widget: "string" }
+          - { label: "Home score", name: "homeScore", widget: "number", value_type: "int" }
+      - label: "Three takes"
+        name: "takes"
+        widget: "list"
+        required: false
+        max: 3
+        fields:
+          - { label: "Take", name: "title", widget: "string" }
+          - { label: "Evidence", name: "body", widget: "text", required: false }
+      - label: "Ratings"
+        name: "ratings"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Game", name: "game", widget: "string" }
+          - { label: "Watchability", name: "watchability", widget: "string", hint: "8/10" }
+          - { label: "Coaching", name: "coaching", widget: "string", hint: "Kiffin A · Dabo F" }
+          - { label: "One line", name: "line", widget: "string", required: false }

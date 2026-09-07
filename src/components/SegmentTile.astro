@@ -1,0 +1,18 @@
+---
+import { SEGMENTS } from '../segments';
+interface Props { k: keyof typeof SEGMENTS; posts: any[]; }
+const { k, posts } = Astro.props;
+const s = SEGMENTS[k];
+---
+<div style="display:flex; flex-direction:column;">
+  <a href={`/${s.slug}`} style={`background:${s.bg}; color:${s.fg}; padding:18px 20px; display:flex; flex-direction:column; gap:6px;`}>
+    <span class="label" style={k === 'morning-after' ? 'color: var(--lime)' : ''}>{s.num} · {s.day}</span>
+    <span class="anton" style="font-size:28px">{s.name}</span>
+  </a>
+  <div class="cell rule-t" style="flex:1; gap:14px;">
+    {posts.length === 0 && <span class="meta" style="font-size:13px; font-weight:600; color:var(--ink-muted)">First post drops {s.day.toLowerCase()}.</span>}
+    {posts.slice(0, 3).map((p) => (
+      <a href={`/${s.slug}/${p.id}`}><span class="anton" style="font-size:20px; display:block;">{p.data.title}</span></a>
+    ))}
+  </div>
+</div>

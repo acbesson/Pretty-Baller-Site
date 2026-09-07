@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import SegmentTile from '../components/SegmentTile.astro';
+import { SEGMENTS, SEGMENT_ORDER } from '../segments';
+import { allPosts } from '../lib/posts';
+const posts = await allPosts();
+const latest = posts[0];
+const latestSeg = latest ? SEGMENTS[latest.data.segment] : null;
+---
+<Base>
+  <section class="grid grid-2 rule-b">
+    <div class="cell" style="padding:48px 24px; gap:22px; justify-content:space-between;">
+      <span class="label" style="color:var(--pink)">Football, from a 22-year-old girl who knows ball</span>
+      <h1 class="anton" style="font-size:clamp(56px, 8vw, 104px)">Smart first. Funny second. Never hedging.</h1>
+      <p style="margin:0; font-size:18px; font-weight:500; max-width:520px;">Hot seats on Monday, picks on Thursday, the group chat midweek, and every game recapped the morning after.</p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a class="btn" href="#subscribe">Subscribe free</a>
+        <a class="btn outline" href="/standing-on">This week's picks</a>
+      </div>
+    </div>
+    {latest && latestSeg && (
+      <a href={`/${latestSeg.slug}/${latest.id}`} style={`background:${latestSeg.bg}; color:${latestSeg.fg}; padding:28px 24px; display:flex; flex-direction:column; justify-content:space-between; gap:18px;`}>
+        <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+          <span class="label tag" style="background:var(--ink); color:var(--cream)">Latest</span>
+          <span class="label">{latestSeg.name}{latest.data.week ? ` · ${latest.data.week}` : ''}</span>
+        </div>
+        {latest.data.image && <img src={latest.data.image} alt="" style="aspect-ratio:16/9; object-fit:cover; border:2px solid var(--ink);" />}
+        <h2 class="anton" style="font-size:clamp(32px, 4.5vw, 52px); line-height:0.95">{latest.data.title}</h2>
+        {latest.data.dek && <p style="margin:0; font-size:16px; font-weight:500;">{latest.data.dek}</p>}
+        <span class="label">Read it →</span>
+      </a>
+    )}
+  </section>
+
+  <section class="grid grid-4 rule-b">
+    {SEGMENT_ORDER.map((k) => <SegmentTile k={k} posts={posts.filter((p) => p.data.segment === k)} />)}
+  </section>
+</Base>

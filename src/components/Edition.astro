@@ -1,0 +1,13 @@
+---
+import WhosSweating from './editions/WhosSweating.astro';
+import StandingOn from './editions/StandingOn.astro';
+import GroupChat from './editions/GroupChat.astro';
+import MorningAfter from './editions/MorningAfter.astro';
+import { render } from 'astro:content';
+interface Props { post: any; }
+const { post } = Astro.props;
+const { Content } = await render(post);
+const map: Record<string, any> = { 'whos-sweating': WhosSweating, 'standing-on': StandingOn, 'group-chat': GroupChat, 'morning-after': MorningAfter };
+const Cmp = map[post.data.segment];
+---
+<Cmp post={post} Content={Content} />

@@ -1,0 +1,57 @@
+---
+interface Props { post: any; Content: any; }
+const { post, Content } = Astro.props;
+const d = post.data;
+---
+<section class="grid grid-3 rule-b">
+  <div class="cell span2" style="grid-column: span 2; padding: 28px 24px; gap: 16px;">
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <span class="label tag" style="background:var(--pink); color:var(--cream)">Lead</span>
+      <span class="label" style="color:var(--ink-muted)">{d.kicker ?? 'Coach watch'}</span>
+    </div>
+    {d.image && <figure style="margin:0"><img src={d.image} alt="" style="border:2px solid var(--ink); aspect-ratio:16/9; object-fit:cover;" />{d.imageCredit && <figcaption style="font-size:12px; color:var(--ink-muted); font-weight:600; margin-top:8px;">{d.imageCredit}</figcaption>}</figure>}
+    <h1 class="anton" style="font-size:clamp(36px, 5vw, 52px); line-height:0.95">{d.title}</h1>
+    <div class="prose"><Content /></div>
+  </div>
+  <div class="cell" style="padding:28px 24px; gap:14px;">
+    <span class="label" style="color:var(--pink)">Also sweating</span>
+    {d.alsoSweating.length === 0 && <span style="font-size:13px; font-weight:600; color:var(--ink-muted)">Nobody else. Yet.</span>}
+    {d.alsoSweating.map((a: any, i: number) => (
+      <div class={i < d.alsoSweating.length - 1 ? 'rule-b' : ''} style="padding-bottom:14px;">
+        <span class="anton" style="font-size:24px; display:block;">{a.title}</span>
+        {a.meta && <span style="font-size:13px; font-weight:600; color:var(--ink-muted); display:block; margin-top:6px;">{a.meta}</span>}
+      </div>
+    ))}
+  </div>
+</section>
+
+{d.heatIndex.length > 0 && (
+  <section class="heat rule-b">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <h2 class="anton" style="font-size:40px; color:var(--cream)">Heat index</h2>
+      <span class="label" style="color:var(--lime)">Updated Monday</span>
+    </div>
+    {d.heatIndex.map((h: any) => (
+      <div class="row">
+        <div class="top"><span class="label" style="color:var(--cream)">{h.who}</span><span class="anton" style="font-size:26px; color:var(--lime)">{h.temp}°</span></div>
+        <div class="bar"><span style={`width:${h.temp}%`}></span></div>
+        {h.note && <span style="font-size:14px;">{h.note}</span>}
+      </div>
+    ))}
+  </section>
+)}
+
+{d.oopsies.length > 0 && (
+  <>
+    <div style="padding:28px 24px 0;"><h2 class="anton" style="font-size:40px">Ownership oopsies</h2></div>
+    <section class="grid grid-3 rule-b" style="margin-top:18px; border-top: var(--rule);">
+      {d.oopsies.map((o: any) => (
+        <div class="cell">
+          <span class="label tag" style="border:2px solid var(--purple); color:var(--purple-deep); padding:6px 10px; align-self:flex-start;">{o.tag}</span>
+          <span class="anton" style="font-size:26px">{o.title}</span>
+          {o.body && <p style="margin:0; font-size:15px;">{o.body}</p>}
+        </div>
+      ))}
+    </section>
+  </>
+)}

@@ -1,0 +1,57 @@
+---
+interface Props { post: any; Content: any; }
+const { post, Content } = Astro.props;
+const d = post.data;
+const cols = Math.min(Math.max(d.scoreboard.length, 1), 6);
+---
+{d.scoreboard.length > 0 && (
+  <section class="rule-b scoreboard" style={`background:var(--ink); color:var(--ink-body); display:grid; grid-template-columns:repeat(${cols}, minmax(0, 1fr)); border-top:2px solid var(--ink-bar);`}>
+    {d.scoreboard.map((g: any) => (
+      <div style="padding:16px 20px; border-right:2px solid var(--ink-bar); display:flex; flex-direction:column; gap:4px;">
+        <span class="label" style="color:var(--ink-muted)">{g.label}</span>
+        <span class="anton" style="font-size:24px; color:var(--cream); margin-top:6px;">{`${g.away} ${g.awayScore}`}</span>
+        <span class="anton" style="font-size:24px; color:var(--lime)">{`${g.home} ${g.homeScore}`}</span>
+      </div>
+    ))}
+  </section>
+)}
+
+<section class="cell rule-b" style="padding:28px 24px; gap:16px;">
+  <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+    <span class="label tag" style="background:var(--ink); color:var(--cream)">Recap</span>
+    <span class="label" style="color:var(--ink-muted)">{d.kicker ?? 'The morning after'}</span>
+  </div>
+  <h1 class="anton" style="font-size:clamp(36px, 5vw, 56px); line-height:0.95; max-width:1000px;">{d.title}</h1>
+  {d.dek && <p style="margin:0; font-size:20px; font-weight:500; max-width:820px;">{d.dek}</p>}
+  {d.image && <figure style="margin:0; max-width:820px;"><img src={d.image} alt="" style="border:2px solid var(--ink); aspect-ratio:16/9; object-fit:cover;" />{d.imageCredit && <figcaption style="font-size:12px; color:var(--ink-muted); font-weight:600; margin-top:8px;">{d.imageCredit}</figcaption>}</figure>}
+  <div class="prose" style="max-width:820px;"><Content /></div>
+</section>
+
+{d.takes.length > 0 && (
+  <section class="grid grid-3 rule-b">
+    {d.takes.map((t: any, i: number) => (
+      <div class="cell" style="padding:26px 24px;">
+        <span class="anton" style="font-size:88px; color:var(--pink)">{i + 1}</span>
+        <span class="anton" style="font-size:30px">{t.title}</span>
+        {t.body && <p style="margin:0; font-size:15px;">{t.body}</p>}
+      </div>
+    ))}
+  </section>
+)}
+
+{d.ratings.length > 0 && (
+  <>
+    <div style="padding:24px 24px 16px;"><h2 class="anton" style="font-size:40px">Ratings</h2></div>
+    <div class="ratings">
+      <div class="rrow head"><span class="label">Game</span><span class="label">Watchability</span><span class="label">Coaching</span><span class="label">One line</span></div>
+      {d.ratings.map((r: any) => (
+        <div class="rrow">
+          <span class="anton" style="font-size:22px">{r.game}</span>
+          <span class="anton" style="font-size:22px; color:var(--pink)">{r.watchability}</span>
+          <span class="anton" style="font-size:22px">{r.coaching}</span>
+          <span style="font-size:15px;">{r.line}</span>
+        </div>
+      ))}
+    </div>
+  </>
+)}

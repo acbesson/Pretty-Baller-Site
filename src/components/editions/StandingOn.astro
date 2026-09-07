@@ -1,0 +1,55 @@
+---
+interface Props { post: any; Content: any; }
+const { post, Content } = Astro.props;
+const d = post.data;
+const r = d.receipts;
+---
+<section class="grid grid-4 rule-b">
+  <div class="cell" style="padding:18px 24px; gap:6px;"><span class="label" style="color:var(--ink-muted)">Season ATS</span><span class="anton" style="font-size:40px">{r.seasonATS}</span></div>
+  <div class="cell" style="padding:18px 24px; gap:6px;"><span class="label" style="color:var(--ink-muted)">Last week</span><span class="anton" style="font-size:40px">{r.lastWeek}</span></div>
+  <div class="cell" style="padding:18px 24px; gap:6px;"><span class="label" style="color:var(--ink-muted)">Locks</span><span class="anton" style="font-size:40px">{r.locks}</span></div>
+  <div class="cell" style="padding:18px 24px; gap:6px;"><span class="label" style="color:var(--ink-muted)">Worst beat</span><span class="anton" style="font-size:40px">{r.worstBeat}</span></div>
+</section>
+
+<section class="grid grid-3 rule-b">
+  <div class="cell span2" style="grid-column: span 2; padding:28px 24px; gap:16px;">
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <span class="label tag" style="background:var(--lime); color:var(--ink)">Lock of the week</span>
+      <span class="label" style="color:var(--ink-muted)">{d.kicker ?? 'Preview'}</span>
+    </div>
+    <h1 class="anton" style="font-size:clamp(36px, 5vw, 52px); line-height:0.95">{d.title}</h1>
+    <div class="prose"><Content /></div>
+  </div>
+  <div style="background:var(--pink); color:var(--cream); padding:28px 24px; display:flex; flex-direction:column; justify-content:space-between; gap:16px;">
+    <span class="label">Confidence</span>
+    <span class="anton" style="font-size:110px">{d.confidence}<span style="font-size:44px">/10</span></span>
+    <span style="font-size:14px; font-weight:600; line-height:1.45;">{d.confidenceNote ?? "Reserved for picks I'd argue about at a wedding."}</span>
+  </div>
+</section>
+
+{d.slate.length > 0 && (
+  <>
+    <div style="padding:24px 24px 0;"><h2 class="anton" style="font-size:40px">The slate</h2></div>
+    <section class="grid grid-3 rule-b" style="margin-top:16px; border-top: var(--rule);">
+      {d.slate.map((g: any) => (
+        <div class="cell" style="padding:20px 24px; gap:10px;">
+          <span class="label" style="color:var(--ink-muted)">{g.when}</span>
+          <span class="anton" style="font-size:28px">{g.matchup}</span>
+          <div style="display:flex; align-items:center; gap:10px;"><span class="label tag" style="background:var(--ink); color:var(--cream); padding:6px 10px;">Pick</span><span style="font-size:15px; font-weight:600;">{g.pick}</span></div>
+          {g.why && <span style="font-size:15px;">{g.why}</span>}
+          <div style="display:flex; gap:4px; margin-top:4px;">
+            {[1,2,3,4,5].map((i) => <span style={`width:22px; height:10px; display:block; ${i <= g.conf ? 'background:var(--pink);' : 'border:2px solid var(--ink);'}`}></span>)}
+          </div>
+        </div>
+      ))}
+    </section>
+  </>
+)}
+
+{d.hotTake && (
+  <section style="background:var(--ink); color:var(--ink-body); padding:28px 24px; display:flex; flex-direction:column; gap:12px;" class="rule-b">
+    <span class="label" style="color:var(--lime)">Hot take · Standing on it</span>
+    <h2 class="anton" style="font-size:clamp(32px, 4vw, 44px); color:var(--cream); max-width:1000px;">{d.hotTake.title}</h2>
+    {d.hotTake.body && <p style="margin:0; font-size:16px; max-width:900px;">{d.hotTake.body}</p>}
+  </section>
+)}

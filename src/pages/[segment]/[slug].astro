@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import Edition from '../../components/Edition.astro';
+import { SEGMENTS } from '../../segments';
+import { allPosts } from '../../lib/posts';
+export async function getStaticPaths() {
+  const posts = await allPosts();
+  return posts.map((post) => ({ params: { segment: SEGMENTS[post.data.segment].slug, slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props;
+const s = SEGMENTS[post.data.segment];
+const date = post.data.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const share = new URL(Astro.url.pathname, Astro.site).toString();
+---
+<Base title={post.data.title} description={post.data.dek} active={post.data.segment} week={post.data.week ?? 'Week 1'} crumb={`Section ${s.num} · ${s.label}`} image={post.data.image ?? '/images/pb-avatar.png'}>
+  <div class="rule-b" style={`background:${s.bg}; color:${s.fg}; padding:14px 24px; display:flex; gap:14px; align-items:center; flex-wrap:wrap;`}>
+    <a class="label" href={`/${s.slug}`}>{s.num} · {s.name}</a>
+    <span class="label" style="opacity:.75">{date}{post.data.week ? ` · ${post.data.week}` : ''}</span>
+    <span class="label" style="opacity:.75; margin-left:auto;">By Ava Besson</span>
+  </div>
+  <Edition post={post} />
+  <div class="cell rule-b" style="flex-direction:row; gap:12px; flex-wrap:wrap; align-items:center;">
+    <span class="label" style="color:var(--ink-muted)">Share</span>
+    <a class="btn outline" href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(share)}&text=${encodeURIComponent(post.data.title)}`} target="_blank" rel="noopener">X</a>
+    <a class="btn outline" href={`https://www.threads.net/intent/post?text=${encodeURIComponent(post.data.title + ' ' + share)}`} target="_blank" rel="noopener">Threads</a>
+    <button class="btn outline" type="button" onclick="navigator.clipboard.writeText(location.href); this.textContent='Copied'">Copy link</button>
+    <a class="label" href={`/${s.slug}`} style="margin-left:auto;">← All {s.name} editions</a>
+  </div>
+</Base>

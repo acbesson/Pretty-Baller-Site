@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import Edition from '../../components/Edition.astro';
+import { SEGMENTS, SEGMENT_ORDER } from '../../segments';
+import { allPosts } from '../../lib/posts';
+export async function getStaticPaths() {
+  return SEGMENT_ORDER.map((k) => ({ params: { segment: SEGMENTS[k].slug }, props: { k } }));
+}
+const { k } = Astro.props;
+const s = SEGMENTS[k];
+const posts = (await allPosts()).filter((p) => p.data.segment === k);
+const [latest, ...older] = posts;
+---
+<Base title={s.name} description={s.blurb} active={k} week={latest?.data.week ?? 'Week 1'} crumb={`Section ${s.num} · ${s.label}`}>
+  <section class="masthead" style={`background:${s.bg}; color:${s.fg};`}>
+    <span class="label" style={k === 'morning-after' ? 'color: var(--lime)' : ''}>Section {s.num} — {s.label}</span>
+    <h1 class="anton">{s.name}</h1>
+    <p>{s.blurb}</p>
+  </section>
+
+  {latest ? <Edition post={latest} /> : (
+    <section class="cell rule-b" style="padding:48px 24px;">
+      <h2 class="anton" style="font-size:40px">First edition drops {s.day.toLowerCase()}.</h2>
+      <p style="margin:0; max-width:600px;">Until then, the other three segments are open, and the receipts start the moment the first pick goes up.</p>
+    </section>
+  )}
+
+  {older.length > 0 && (
+    <section class="cell rule-b" style="gap:14px;">
+      <span class="label" style="color:var(--pink)">Past editions</span>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        {older.map((p) => (
+          <a href={`/${s.slug}/${p.id}`} style="display:flex; gap:16px; align-items:baseline; flex-wrap:wrap;">
+            <span class="label" style="color:var(--ink-muted); min-width:90px;">{p.data.week ?? p.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span>
+            <span class="anton" style="font-size:22px">{p.data.title}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</Base>
